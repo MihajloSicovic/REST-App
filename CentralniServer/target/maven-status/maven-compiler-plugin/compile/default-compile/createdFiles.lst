@@ -1,0 +1,17 @@
+com\mycompany\centralniserver\resources\KategorijaResource.class
+com\mycompany\centralniserver\resources\GradResource.class
+filters\BasicAuthFilter.class
+views\KorisnikView.class
+entities\Korisnik.class
+dummies\GradDummy.class
+com\mycompany\centralniserver\resources\ArtikalResource.class
+models\KategorijaModel.class
+com\mycompany\centralniserver\JAXRSConfiguration.class
+entities\Uloga.class
+views\GradView.class
+models\ArtikalModel.class
+entities\Grad.class
+filters\AuthChecker.class
+com\mycompany\centralniserver\resources\JavaEE8Resource.class
+com\mycompany\centralniserver\resources\KorisnikResource.class
+dummies\KorisnikDummy.class
