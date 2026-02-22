@@ -1,16 +1,18 @@
 package entities;
 
 import entities.Kategorija;
+import entities.StavkaKorpa;
 import entities.StavkaZelja;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2026-02-08T18:21:02")
+@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2026-02-16T18:46:16")
 @StaticMetamodel(Artikal.class)
 public class Artikal_ { 
 
+    public static volatile ListAttribute<Artikal, StavkaKorpa> stavkaKorpaList;
     public static volatile SingularAttribute<Artikal, Integer> idK;
     public static volatile SingularAttribute<Artikal, Kategorija> idKat;
     public static volatile SingularAttribute<Artikal, Integer> idA;

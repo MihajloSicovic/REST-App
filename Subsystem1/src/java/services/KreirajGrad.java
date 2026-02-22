@@ -4,9 +4,7 @@
  */
 package services;
 
-import dummies.GradDummy;
 import entities.Grad;
-import entities.Korisnik;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
@@ -15,7 +13,7 @@ import javax.jms.ObjectMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+import models.GradModel;
 
 /**
  *
@@ -27,7 +25,7 @@ public class KreirajGrad {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("Subsystem1PU");
         EntityManager em = emf.createEntityManager();
         
-        GradDummy gd = (GradDummy)((ObjectMessage)msg).getObject();
+        GradModel gd = (GradModel)((ObjectMessage)msg).getObject();
         
         Grad g = new Grad();
         g.setNaziv(gd.getNaziv());

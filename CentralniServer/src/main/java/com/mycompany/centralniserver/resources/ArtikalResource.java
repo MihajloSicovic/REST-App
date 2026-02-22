@@ -47,7 +47,7 @@ public class ArtikalResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="ServerQueue")
+    @Resource(lookup="serverQueue")
     Queue myQueue;
     
     @GET

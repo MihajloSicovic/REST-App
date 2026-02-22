@@ -23,15 +23,15 @@ public class StavkaZeljaPK implements Serializable {
     private int idK;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "redBr")
-    private int redBr;
+    @Column(name = "idA")
+    private int idA;
 
     public StavkaZeljaPK() {
     }
 
-    public StavkaZeljaPK(int idK, int redBr) {
+    public StavkaZeljaPK(int idK, int idA) {
         this.idK = idK;
-        this.redBr = redBr;
+        this.idA = idA;
     }
 
     public int getIdK() {
@@ -42,19 +42,19 @@ public class StavkaZeljaPK implements Serializable {
         this.idK = idK;
     }
 
-    public int getRedBr() {
-        return redBr;
+    public int getIdA() {
+        return idA;
     }
 
-    public void setRedBr(int redBr) {
-        this.redBr = redBr;
+    public void setIdA(int idA) {
+        this.idA = idA;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) idK;
-        hash += (int) redBr;
+        hash += (int) idA;
         return hash;
     }
 
@@ -68,7 +68,7 @@ public class StavkaZeljaPK implements Serializable {
         if (this.idK != other.idK) {
             return false;
         }
-        if (this.redBr != other.redBr) {
+        if (this.idA != other.idA) {
             return false;
         }
         return true;
@@ -76,7 +76,7 @@ public class StavkaZeljaPK implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.StavkaZeljaPK[ idK=" + idK + ", redBr=" + redBr + " ]";
+        return "entities.StavkaZeljaPK[ idK=" + idK + ", idA=" + idA + " ]";
     }
     
 }

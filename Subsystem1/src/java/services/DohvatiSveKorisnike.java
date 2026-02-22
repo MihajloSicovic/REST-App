@@ -4,7 +4,6 @@
  */
 package services;
 
-import entities.Grad;
 import entities.Korisnik;
 import entities.Uloga;
 import java.io.Serializable;
@@ -18,8 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
-import views.GradView;
-import views.KorisnikView;
+import models.KorisnikModel;
 
 /**
  *
@@ -32,13 +30,13 @@ public class DohvatiSveKorisnike {
         EntityManager em = emf.createEntityManager();
         
         TypedQuery<Korisnik> query = em.createNamedQuery("Korisnik.findAll", Korisnik.class);
-        List<KorisnikView> result = new ArrayList<>();
+        List<KorisnikModel> result = new ArrayList<>();
         
         for (Korisnik k: query.getResultList()) {
             List<Integer> ulogaList = new ArrayList<>();
             for (Uloga u: k.getUlogaList()) ulogaList.add(u.getIdU());
             
-            KorisnikView kv = new KorisnikView(k.getIdK(), k.getKorisnickoIme(),
+            KorisnikModel kv = new KorisnikModel(k.getIdK(), k.getKorisnickoIme(),
             k.getLozinka(), k.getIme(), k.getPrezime(), k.getAdresa(), 
             k.getStanje(), k.getGrad().getIdG(), ulogaList);
             

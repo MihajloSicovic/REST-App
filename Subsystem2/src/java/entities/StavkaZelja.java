@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "StavkaZelja.findAll", query = "SELECT s FROM StavkaZelja s"),
     @NamedQuery(name = "StavkaZelja.findByIdK", query = "SELECT s FROM StavkaZelja s WHERE s.stavkaZeljaPK.idK = :idK"),
-    @NamedQuery(name = "StavkaZelja.findByRedBr", query = "SELECT s FROM StavkaZelja s WHERE s.stavkaZeljaPK.redBr = :redBr"),
+    @NamedQuery(name = "StavkaZelja.findByIdA", query = "SELECT s FROM StavkaZelja s WHERE s.stavkaZeljaPK.idA = :idA"),
     @NamedQuery(name = "StavkaZelja.findByDatumDodavanja", query = "SELECT s FROM StavkaZelja s WHERE s.datumDodavanja = :datumDodavanja")})
 public class StavkaZelja implements Serializable {
 
@@ -42,9 +42,9 @@ public class StavkaZelja implements Serializable {
     @Column(name = "datumDodavanja")
     @Temporal(TemporalType.DATE)
     private Date datumDodavanja;
-    @JoinColumn(name = "idA", referencedColumnName = "idA")
+    @JoinColumn(name = "idA", referencedColumnName = "idA", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Artikal idA;
+    private Artikal artikal;
     @JoinColumn(name = "idK", referencedColumnName = "idK", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private ListaZelja listaZelja;
@@ -61,8 +61,8 @@ public class StavkaZelja implements Serializable {
         this.datumDodavanja = datumDodavanja;
     }
 
-    public StavkaZelja(int idK, int redBr) {
-        this.stavkaZeljaPK = new StavkaZeljaPK(idK, redBr);
+    public StavkaZelja(int idK, int idA) {
+        this.stavkaZeljaPK = new StavkaZeljaPK(idK, idA);
     }
 
     public StavkaZeljaPK getStavkaZeljaPK() {
@@ -81,12 +81,12 @@ public class StavkaZelja implements Serializable {
         this.datumDodavanja = datumDodavanja;
     }
 
-    public Artikal getIdA() {
-        return idA;
+    public Artikal getArtikal() {
+        return artikal;
     }
 
-    public void setIdA(Artikal idA) {
-        this.idA = idA;
+    public void setArtikal(Artikal artikal) {
+        this.artikal = artikal;
     }
 
     public ListaZelja getListaZelja() {
@@ -119,7 +119,7 @@ public class StavkaZelja implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.StavkaZelja[ stavkaZeljaPK=" + stavkaZeljaPK + " ]";
+        return "entities.StavkaZelja[ stavkaZeljaPK=" + stavkaZeljaPK + " ]";
     }
     
 }

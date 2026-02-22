@@ -4,7 +4,6 @@
  */
 package com.mycompany.centralniserver.resources;
 
-import dummies.GradDummy;
 import filters.AuthChecker;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,7 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import views.GradView;
+import models.GradModel;
 
 /**
  *
@@ -46,7 +45,7 @@ public class GradResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="ServerQueue")
+    @Resource(lookup="serverQueue")
     Queue myQueue;
     
     @GET
@@ -67,7 +66,7 @@ public class GradResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<GradView> result = consumer.receiveBody(List.class);
+            List<GradModel> result = consumer.receiveBody(List.class);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -80,7 +79,7 @@ public class GradResource {
     @Consumes("application/json")
     @Produces(MediaType.TEXT_PLAIN)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Response createGrad(@Context HttpHeaders headers, GradDummy gd) {
+    public Response createGrad(@Context HttpHeaders headers, GradModel gd) {
         try {
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;

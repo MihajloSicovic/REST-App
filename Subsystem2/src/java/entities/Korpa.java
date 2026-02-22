@@ -104,7 +104,7 @@ public class Korpa implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.Korpa[ idK=" + idK + " ]";
+        return "entities.Korpa[ idK=" + idK + " ]";
     }
     
 }

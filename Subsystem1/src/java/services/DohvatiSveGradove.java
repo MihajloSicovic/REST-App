@@ -16,7 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
-import views.GradView;
+import models.GradModel;
 
 /**
  *
@@ -30,10 +30,10 @@ public class DohvatiSveGradove {
         
         TypedQuery<Grad> query = em.createNamedQuery("Grad.findAll", Grad.class);
         
-        List<GradView> result = new ArrayList<>();
+        List<GradModel> result = new ArrayList<>();
         
         for (Grad g: query.getResultList()) {
-            GradView gv = new GradView(g.getIdG(), g.getNaziv());
+            GradModel gv = new GradModel(g.getIdG(), g.getNaziv());
             result.add(gv);
         }
         

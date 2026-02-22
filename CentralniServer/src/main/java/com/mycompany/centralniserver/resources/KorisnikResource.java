@@ -4,11 +4,7 @@
  */
 package com.mycompany.centralniserver.resources;
 
-import dummies.GradDummy;
-import dummies.KorisnikDummy;
-import entities.Korisnik;
 import filters.AuthChecker;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +21,6 @@ import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,7 +32,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import views.KorisnikView;
+import models.KorisnikModel;
 
 /**
  *
@@ -53,7 +47,7 @@ public class KorisnikResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="ServerQueue")
+    @Resource(lookup="serverQueue")
     Queue myQueue;
     
     @GET
@@ -74,7 +68,7 @@ public class KorisnikResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<KorisnikView> result = consumer.receiveBody(List.class);
+            List<KorisnikModel> result = consumer.receiveBody(List.class);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -106,6 +100,7 @@ public class KorisnikResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
+            while (consumer.receiveNoWait() != null);
             String result = consumer.receiveBody(String.class);
             
             return Response.ok(result).build();
@@ -153,7 +148,7 @@ public class KorisnikResource {
     @Consumes("application/json")
     @Produces(MediaType.TEXT_PLAIN)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Response createKorisnik(@Context HttpHeaders headers, KorisnikDummy kd) {
+    public Response createKorisnik(@Context HttpHeaders headers, KorisnikModel kd) {
         try {
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;

@@ -69,10 +69,12 @@ public class Artikal implements Serializable {
     @NotNull
     @Column(name = "idK")
     private int idK;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idA")
+    private List<StavkaKorpa> stavkaKorpaList;
     @JoinColumn(name = "idKat", referencedColumnName = "idKat")
     @ManyToOne(optional = false)
     private Kategorija idKat;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idA")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "artikal")
     private List<StavkaZelja> stavkaZeljaList;
 
     public Artikal() {
@@ -139,6 +141,15 @@ public class Artikal implements Serializable {
         this.idK = idK;
     }
 
+    @XmlTransient
+    public List<StavkaKorpa> getStavkaKorpaList() {
+        return stavkaKorpaList;
+    }
+
+    public void setStavkaKorpaList(List<StavkaKorpa> stavkaKorpaList) {
+        this.stavkaKorpaList = stavkaKorpaList;
+    }
+
     public Kategorija getIdKat() {
         return idKat;
     }
@@ -178,7 +189,7 @@ public class Artikal implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.Artikal[ idA=" + idA + " ]";
+        return "entities.Artikal[ idA=" + idA + " ]";
     }
     
 }

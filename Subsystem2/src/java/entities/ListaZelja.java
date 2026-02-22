@@ -108,7 +108,7 @@ public class ListaZelja implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.ListaZelja[ idK=" + idK + " ]";
+        return "entities.ListaZelja[ idK=" + idK + " ]";
     }
     
 }

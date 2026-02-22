@@ -13,11 +13,18 @@ import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Topic;
+import services.DodajArtikalUKorpu;
+import services.DodajArtikalUListuZelja;
 import services.DohvatiArtikleKorisnika;
+import services.DohvatiKorpuKorisnika;
+import services.DohvatiListuZeljaKorisnika;
+import services.DohvatiSveArtikle;
 import services.DohvatiSveKategorije;
 import services.KreirajArtikal;
 import services.KreirajKategoriju;
 import services.MenjanjeCeneArtikla;
+import services.ObrisiArtikalIzKorpe;
+import services.ObrisiArtikalIzListeZelja;
 import services.PostavljanjePopustaArtikal;
 
 /**
@@ -58,16 +65,16 @@ public class Main {
                         PostavljanjePopustaArtikal.service(msg, context);
                         break;
                     case 10:
-                        // Not implemented
+                        DodajArtikalUKorpu.service(msg, context);
                         break;
                     case 11:
-                        // Not implemented
+                        ObrisiArtikalIzKorpe.service(msg, context);
                         break;
                     case 12:
-                        // Not implemented
+                        DodajArtikalUListuZelja.service(msg, context);
                         break;
                     case 13:
-                        // Not implemented
+                        ObrisiArtikalIzListeZelja.service(msg, context);
                         break;
                     case 17:
                         DohvatiSveKategorije.service(msg, context);
@@ -76,10 +83,13 @@ public class Main {
                         DohvatiArtikleKorisnika.service(msg, context);
                         break;
                     case 19:
-                        // Not implemented
+                        DohvatiKorpuKorisnika.service(msg, context);
                         break;
                     case 20:
-                        // Not implemented
+                        DohvatiListuZeljaKorisnika.service(msg, context);
+                        break;
+                    case 24:
+                        DohvatiSveArtikle.service(msg, context);
                         break;
                 }
             } catch (JMSException ex) {

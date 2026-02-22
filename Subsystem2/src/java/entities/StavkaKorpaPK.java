@@ -76,7 +76,7 @@ public class StavkaKorpaPK implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.StavkaKorpaPK[ idK=" + idK + ", redBr=" + redBr + " ]";
+        return "entities.StavkaKorpaPK[ idK=" + idK + ", redBr=" + redBr + " ]";
     }
     
 }

@@ -38,6 +38,9 @@ public class StavkaKorpa implements Serializable {
     @NotNull
     @Column(name = "kolicina")
     private int kolicina;
+    @JoinColumn(name = "idA", referencedColumnName = "idA")
+    @ManyToOne(optional = false)
+    private Artikal idA;
     @JoinColumn(name = "idK", referencedColumnName = "idK", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Korpa korpa;
@@ -74,6 +77,14 @@ public class StavkaKorpa implements Serializable {
         this.kolicina = kolicina;
     }
 
+    public Artikal getIdA() {
+        return idA;
+    }
+
+    public void setIdA(Artikal idA) {
+        this.idA = idA;
+    }
+
     public Korpa getKorpa() {
         return korpa;
     }
@@ -104,7 +115,7 @@ public class StavkaKorpa implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.StavkaKorpa[ stavkaKorpaPK=" + stavkaKorpaPK + " ]";
+        return "entities.StavkaKorpa[ stavkaKorpaPK=" + stavkaKorpaPK + " ]";
     }
     
 }

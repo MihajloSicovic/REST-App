@@ -4,14 +4,11 @@
  */
 package services;
 
-import dummies.GradDummy;
-import entities.Grad;
 import entities.Korisnik;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;

@@ -5,9 +5,6 @@
 package services;
 
 import entities.Artikal;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
@@ -15,8 +12,6 @@ import javax.jms.Message;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
-import models.ArtikalModel;
 
 /**
  *

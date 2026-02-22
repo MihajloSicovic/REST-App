@@ -132,7 +132,7 @@ public class Kategorija implements Serializable {
 
     @Override
     public String toString() {
-        return "enteties.Kategorija[ idKat=" + idKat + " ]";
+        return "entities.Kategorija[ idKat=" + idKat + " ]";
     }
     
 }

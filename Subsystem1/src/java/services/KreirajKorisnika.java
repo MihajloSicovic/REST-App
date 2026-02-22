@@ -4,8 +4,6 @@
  */
 package services;
 
-import dummies.GradDummy;
-import dummies.KorisnikDummy;
 import entities.Grad;
 import entities.Korisnik;
 import entities.Uloga;
@@ -19,6 +17,7 @@ import javax.jms.ObjectMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import models.KorisnikModel;
 
 /**
  *
@@ -30,7 +29,7 @@ public class KreirajKorisnika {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("Subsystem1PU");
         EntityManager em = emf.createEntityManager();
         
-        KorisnikDummy kd = (KorisnikDummy)((ObjectMessage)msg).getObject();
+        KorisnikModel kd = (KorisnikModel)((ObjectMessage)msg).getObject();
         
         Message response;
         
