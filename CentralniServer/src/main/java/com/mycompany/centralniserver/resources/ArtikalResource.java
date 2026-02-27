@@ -47,7 +47,7 @@ public class ArtikalResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="serverQueue")
+    @Resource(lookup="SubRepQueue")
     Queue myQueue;
     
     @GET
@@ -56,8 +56,7 @@ public class ArtikalResource {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response getArtikalByIdK(@Context HttpHeaders headers,
             @PathParam("idK") int idK) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub2");
@@ -68,7 +67,7 @@ public class ArtikalResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<ArtikalModel> result = consumer.receiveBody(List.class);
+            List<ArtikalModel> result = consumer.receiveBody(List.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -84,8 +83,7 @@ public class ArtikalResource {
     public Response updateArtikalCena(@Context HttpHeaders headers,
             @PathParam("idA") int idA, 
             @PathParam("cena") int cena) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub2");
@@ -97,7 +95,7 @@ public class ArtikalResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -113,8 +111,7 @@ public class ArtikalResource {
     public Response updateArtikalPopust(@Context HttpHeaders headers,
             @PathParam("idA") int idA, 
             @PathParam("popust") int popust) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub2");
@@ -126,7 +123,7 @@ public class ArtikalResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -140,8 +137,7 @@ public class ArtikalResource {
     @Produces(MediaType.TEXT_PLAIN)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response createArtikal(@Context HttpHeaders headers, ArtikalModel am) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             ObjectMessage msg = context.createObjectMessage(am);
             msg.setStringProperty("Type", "sub2");
@@ -151,7 +147,7 @@ public class ArtikalResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {

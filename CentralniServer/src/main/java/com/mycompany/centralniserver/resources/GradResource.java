@@ -45,18 +45,17 @@ public class GradResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="serverQueue")
+    @Resource(lookup="SubRepQueue")
     Queue myQueue;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response getAllGrad(@Context HttpHeaders headers) {
-        try {
+        try (JMSContext context = connFactory.createContext()) {
+            
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;
-            
-            JMSContext context = connFactory.createContext();
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub1");
@@ -66,7 +65,7 @@ public class GradResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<GradModel> result = consumer.receiveBody(List.class);
+            List<GradModel> result = consumer.receiveBody(List.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -80,11 +79,10 @@ public class GradResource {
     @Produces(MediaType.TEXT_PLAIN)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response createGrad(@Context HttpHeaders headers, GradModel gd) {
-        try {
+        try (JMSContext context = connFactory.createContext()) {
+            
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;
-            
-            JMSContext context = connFactory.createContext();
             
             ObjectMessage msg = context.createObjectMessage(gd);
             msg.setStringProperty("Type", "sub1");
@@ -94,7 +92,7 @@ public class GradResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {

@@ -4,15 +4,11 @@
  */
 package subsystem1;
 
-import entities.Korisnik;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.jms.*;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+import services.DohvatiKorisnika;
 import services.DohvatiSveGradove;
 import services.DohvatiSveKorisnike;
 import services.DoplatiKorisniku;
@@ -40,30 +36,30 @@ public class Main {
         System.out.println("Subsystem 1 started.");
         
         while(true) {
-            try {
+            try (JMSContext serviceContext = connFactory.createContext()) {
                 Message msg = consumer.receive();
                 int task = msg.getIntProperty("Task");
                 switch(task) {
                     case 1:
-                        // Not implemented
+                        DohvatiKorisnika.service(msg, serviceContext);
                         break;
                     case 2:
-                        KreirajGrad.service(msg, context);
+                        KreirajGrad.service(msg, serviceContext);
                         break;
                     case 3:
-                        KreirajKorisnika.service(msg, context);
+                        KreirajKorisnika.service(msg, serviceContext);
                         break;
                     case 4:
-                        DoplatiKorisniku.service(msg, context);
+                        DoplatiKorisniku.service(msg, serviceContext);
                         break;
                     case 5:
-                        PromeniAdresuKorisnika.service(msg, context);
+                        PromeniAdresuKorisnika.service(msg, serviceContext);
                         break;
                     case 15:
-                        DohvatiSveGradove.service(msg, context);
+                        DohvatiSveGradove.service(msg, serviceContext);
                         break;
                     case 16:
-                        DohvatiSveKorisnike.service(msg, context);
+                        DohvatiSveKorisnike.service(msg, serviceContext);
                         break;
                 }
             } catch (JMSException ex) {

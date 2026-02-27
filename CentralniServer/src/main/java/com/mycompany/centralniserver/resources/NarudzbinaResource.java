@@ -42,7 +42,7 @@ public class NarudzbinaResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="serverQueue")
+    @Resource(lookup="SubRepQueue")
     Queue myQueue;
     
     @GET
@@ -51,8 +51,7 @@ public class NarudzbinaResource {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response getNarudzbinaByIdK(@Context HttpHeaders headers,
             @PathParam("idK") int idK) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub3");
@@ -63,8 +62,7 @@ public class NarudzbinaResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            while (consumer.receiveNoWait() != null);
-            List<ListaZeljaModel> result = consumer.receiveBody(List.class);
+            List<ListaZeljaModel> result = consumer.receiveBody(List.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -77,8 +75,7 @@ public class NarudzbinaResource {
     @Produces(MediaType.APPLICATION_JSON)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response getAllNarudzbina(@Context HttpHeaders headers) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub3");
@@ -88,7 +85,7 @@ public class NarudzbinaResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<ListaZeljaModel> result = consumer.receiveBody(List.class);
+            List<ListaZeljaModel> result = consumer.receiveBody(List.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {

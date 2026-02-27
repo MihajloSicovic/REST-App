@@ -21,10 +21,12 @@ public class KorisnikModel implements Serializable {
     int stanje;
     int idG;
     List<Integer> idU;
+    List<String> ulogaList;
 
     public KorisnikModel() {}    
     
-    public KorisnikModel(int idK, String korisnickoIme, String lozinka, String ime, String prezime, String adresa, int stanje, int idG, List<Integer> idU) {
+    public KorisnikModel(int idK, String korisnickoIme, String lozinka, String ime, 
+            String prezime, String adresa, int stanje, int idG, List<Integer> idU) {
         this.idK = idK;
         this.korisnickoIme = korisnickoIme;
         this.lozinka = lozinka;
@@ -108,13 +110,19 @@ public class KorisnikModel implements Serializable {
         this.idU = idU;
     }
 
-    
+    public List<String> getUlogaList() {
+        return ulogaList;
+    }
+
+    public void setUlogaList(List<String> ulogaList) {
+        this.ulogaList = ulogaList;
+    }
     
     @Override
     public String toString() {
         return idK + ", " + korisnickoIme + ", " + lozinka + ", " + ime 
                 + ", " + prezime + ", " + adresa + ", " + stanje + ", " 
-                + idG + ", " + idU;
+                + idG;
     }
     
     

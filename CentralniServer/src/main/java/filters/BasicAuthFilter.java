@@ -4,19 +4,27 @@
  */
 package filters;
 
-import entities.Korisnik;
-import entities.Uloga;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSConsumer;
+import javax.jms.JMSContext;
+import javax.jms.JMSException;
+import javax.jms.JMSProducer;
+import javax.jms.Queue;
+import javax.jms.TextMessage;
+import javax.jms.Topic;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+import models.KorisnikModel;
 
 /**
  *
@@ -24,8 +32,14 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class BasicAuthFilter implements ContainerRequestFilter {
-    @PersistenceContext(unitName = "my_persistence_unit")
-    EntityManager em;
+    @Resource(lookup="myConnFactory")
+    ConnectionFactory connFactory;
+    
+    @Resource(lookup="SubTopic")
+    Topic myTopic;
+    
+    @Resource(lookup="SubRepQueue")
+    Queue myQueue;
 
     @Override
     public void filter(ContainerRequestContext context) throws IOException {
@@ -35,7 +49,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
             context.abortWith(
                 Response
                     .status(Response.Status.UNAUTHORIZED)
-                    .entity("Korisničko ime i lozinka nisu prosleđeni.")
+                    .entity("Korisnicko ime i lozinka nisu prosledjeni.")
                     .build()
             );
             return;
@@ -45,7 +59,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
             context.abortWith(
                 Response
                     .status(Response.Status.UNAUTHORIZED)
-                    .entity("Korisničko ime i lozinka nisu prosleđeni.")
+                    .entity("Korisnicko ime i lozinka nisu prosledjeni.")
                     .build()
             );
             return;
@@ -55,32 +69,52 @@ public class BasicAuthFilter implements ContainerRequestFilter {
             context.abortWith(
                 Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity("Pogrešno prosleđeno korisničko ime ili lozinka.")
+                    .entity("Pogresno prosledjeno korisnicko ime ili lozinka.")
                     .build()
             );
             return;            
         }
+        // To replace
         String username = authorization[0];
         String password = authorization[1];
-        List<Korisnik> korisnici = em.createNamedQuery("Korisnik.findByKorisnickoIme", Korisnik.class)
-            .setParameter("korisnickoIme", username)
-            .getResultList();
-        if (korisnici.isEmpty() || !korisnici.get(0).getLozinka().equals(password)) {
-            context.abortWith(
-                Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("Pogrešno korisničko ime ili lozinka.")
-                    .build()
-            );
-            return;
-        }
-        // Pass headers to resources.
-        String roles = "";
-        Korisnik korisnik = korisnici.get(0);
-        for (Uloga u: korisnik.getUlogaList()) roles += u.getNaziv() + ",";
-        if (!roles.isEmpty()) roles = roles.substring(0, roles.length() - 1);
         
-        context.getHeaders().add("X-User-ID", korisnik.getIdK().toString());
-        context.getHeaders().add("X-User-Roles", roles);
+        try (JMSContext contextJMS = connFactory.createContext()) {
+            
+            TextMessage msg = contextJMS.createTextMessage();
+            try {
+                msg.setStringProperty("Type", "sub1");
+                msg.setIntProperty("Task", 1);
+                msg.setStringProperty("korisnickoIme", username);
+                msg.setStringProperty("lozinka", password);
+                msg.setJMSReplyTo(myQueue);
+            } catch (JMSException ex) {
+                Logger.getLogger(BasicAuthFilter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            JMSConsumer consumer = contextJMS.createConsumer(myQueue);
+            while (consumer.receiveNoWait() != null);
+            JMSProducer producer = contextJMS.createProducer();
+            producer.send(myTopic, msg);
+
+            try {
+                KorisnikModel km = consumer.receiveBody(KorisnikModel.class, 10000);
+
+                // Pass headers to resources.
+                String roles = "";
+                for (String u: km.getUlogaList()) roles += u + ",";
+                if (!roles.isEmpty()) roles = roles.substring(0, roles.length() - 1);
+
+                context.getHeaders().add("X-User-ID", String.valueOf(km.getIdK()));
+                context.getHeaders().add("X-User-Roles", roles);
+            }
+            catch (Exception e) {
+                context.abortWith(
+                    Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity("Pogresno korisnicko ime ili lozinka.")
+                        .build()
+                );
+            }
+        }
     }
 }

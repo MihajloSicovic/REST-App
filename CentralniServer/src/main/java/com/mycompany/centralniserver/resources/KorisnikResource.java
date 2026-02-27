@@ -47,18 +47,45 @@ public class KorisnikResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="serverQueue")
+    @Resource(lookup="SubRepQueue")
     Queue myQueue;
+    
+    @GET
+    @Path("{korisnickoIme}/{lozinka}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public Response getKorisnik(@Context HttpHeaders headers,
+            @PathParam("korisnickoIme") String korisnickoIme, 
+            @PathParam("lozinka") String lozinka) {
+        try (JMSContext context = connFactory.createContext()) {
+            
+            TextMessage msg = context.createTextMessage();
+            msg.setStringProperty("Type", "sub1");
+            msg.setIntProperty("Task", 1);
+            msg.setStringProperty("korisnickoIme", korisnickoIme);
+            msg.setStringProperty("lozinka", lozinka);
+            msg.setJMSReplyTo(myQueue);
+            
+            JMSProducer producer = context.createProducer();
+            producer.send(myTopic, msg);
+            JMSConsumer consumer = context.createConsumer(myQueue);
+            KorisnikModel result = consumer.receiveBody(KorisnikModel.class, 10000);
+            
+            return Response.ok(result).build();
+        } catch (JMSException ex) {
+            Logger.getLogger(KorisnikResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response getAllKorisnik(@Context HttpHeaders headers) {
-        try {
+        try (JMSContext context = connFactory.createContext()) {
+            
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;
-            
-            JMSContext context = connFactory.createContext();
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub1");
@@ -68,7 +95,7 @@ public class KorisnikResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<KorisnikModel> result = consumer.receiveBody(List.class);
+            List<KorisnikModel> result = consumer.receiveBody(List.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -84,11 +111,10 @@ public class KorisnikResource {
     public Response updateStanjeKorisnik(@Context HttpHeaders headers,
             @PathParam("idK") int idK, 
             @PathParam("dodatak") int dodatak) {
-        try {
+        try (JMSContext context = connFactory.createContext()) {
+            
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;
-            
-            JMSContext context = connFactory.createContext();
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub1");
@@ -100,8 +126,7 @@ public class KorisnikResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            while (consumer.receiveNoWait() != null);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -118,11 +143,10 @@ public class KorisnikResource {
             @PathParam("idK") int idK, 
             @PathParam("idG") int idG, 
             @PathParam("adresa") String adresa) {
-        try {
+        try (JMSContext context = connFactory.createContext()) {
+            
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;
-            
-            JMSContext context = connFactory.createContext();
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub1");
@@ -135,7 +159,7 @@ public class KorisnikResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -149,11 +173,10 @@ public class KorisnikResource {
     @Produces(MediaType.TEXT_PLAIN)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response createKorisnik(@Context HttpHeaders headers, KorisnikModel kd) {
-        try {
+        try (JMSContext context = connFactory.createContext()) {
+            
             Response earlyResp = AuthChecker.checkAuth(headers, "administrator");
             if (earlyResp != null) return earlyResp;
-            
-            JMSContext context = connFactory.createContext();
             
             ObjectMessage msg = context.createObjectMessage(kd);
             msg.setStringProperty("Type", "sub1");
@@ -163,7 +186,7 @@ public class KorisnikResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {

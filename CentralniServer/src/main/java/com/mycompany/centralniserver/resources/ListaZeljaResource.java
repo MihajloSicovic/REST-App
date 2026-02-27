@@ -46,7 +46,7 @@ public class ListaZeljaResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="serverQueue")
+    @Resource(lookup="SubRepQueue")
     Queue myQueue;
     
     @GET
@@ -55,8 +55,7 @@ public class ListaZeljaResource {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response getListaZeljaByIdK(@Context HttpHeaders headers,
             @PathParam("idK") int idK) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub2");
@@ -67,7 +66,7 @@ public class ListaZeljaResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<ListaZeljaModel> result = consumer.receiveBody(List.class);
+            List<ListaZeljaModel> result = consumer.receiveBody(List.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -82,8 +81,7 @@ public class ListaZeljaResource {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response addArtikalToLista(@Context HttpHeaders headers, 
             ListaZeljaModel lm) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             ObjectMessage msg = context.createObjectMessage(lm);
             msg.setStringProperty("Type", "sub2");
@@ -93,7 +91,7 @@ public class ListaZeljaResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -110,8 +108,7 @@ public class ListaZeljaResource {
     public Response deleteArtikalFromLista(@Context HttpHeaders headers, 
             @PathParam("idK") int idK,
             @PathParam("idA") int idA) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub2");
@@ -123,7 +120,7 @@ public class ListaZeljaResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {

@@ -43,21 +43,21 @@ public class Main {
         System.out.println("Subsystem 3 started.");
         
         while(true) {
-            try {
+            try (JMSContext serviceContext = connFactory.createContext()) {
                 Message msg = consumer.receive();
                 int task = msg.getIntProperty("Task");
                 switch(task) {
                     case 14:
-                        Placanje.service(msg, context, myTopic, transQueue);
+                        Placanje.service(msg, serviceContext, myTopic, transQueue);
                         break;
                     case 21:
-                        DohvatiNarudzbineKorisnika.service(msg, context);
+                        DohvatiNarudzbineKorisnika.service(msg, serviceContext);
                         break;
                     case 22:
-                        DohvatiSveNarudzbine.service(msg, context);
+                        DohvatiSveNarudzbine.service(msg, serviceContext);
                         break;
                     case 23:
-                        DohvatiSveTransakcije.service(msg, context);
+                        DohvatiSveTransakcije.service(msg, serviceContext);
                         break;
                 }
             } catch (JMSException ex) {

@@ -48,48 +48,48 @@ public class Main {
         System.out.println("Subsystem 2 started.");
         
         while(true) {
-            try {
+            try (JMSContext serviceContext = connFactory.createContext()) {
                 Message msg = consumer.receive();
                 int task = msg.getIntProperty("Task");
                 switch(task) {
                     case 6:
-                        KreirajKategoriju.service(msg, context);
+                        KreirajKategoriju.service(msg, serviceContext);
                         break;
                     case 7:
-                        KreirajArtikal.service(msg, context);
+                        KreirajArtikal.service(msg, serviceContext);
                         break;
                     case 8:
-                        MenjanjeCeneArtikla.service(msg, context);
+                        MenjanjeCeneArtikla.service(msg, serviceContext);
                         break;
                     case 9:
-                        PostavljanjePopustaArtikal.service(msg, context);
+                        PostavljanjePopustaArtikal.service(msg, serviceContext);
                         break;
                     case 10:
-                        DodajArtikalUKorpu.service(msg, context);
+                        DodajArtikalUKorpu.service(msg, serviceContext);
                         break;
                     case 11:
-                        ObrisiArtikalIzKorpe.service(msg, context);
+                        ObrisiArtikalIzKorpe.service(msg, serviceContext);
                         break;
                     case 12:
-                        DodajArtikalUListuZelja.service(msg, context);
+                        DodajArtikalUListuZelja.service(msg, serviceContext);
                         break;
                     case 13:
-                        ObrisiArtikalIzListeZelja.service(msg, context);
+                        ObrisiArtikalIzListeZelja.service(msg, serviceContext);
                         break;
                     case 17:
-                        DohvatiSveKategorije.service(msg, context);
+                        DohvatiSveKategorije.service(msg, serviceContext);
                         break;
                     case 18:
-                        DohvatiArtikleKorisnika.service(msg, context);
+                        DohvatiArtikleKorisnika.service(msg, serviceContext);
                         break;
                     case 19:
-                        DohvatiKorpuKorisnika.service(msg, context);
+                        DohvatiKorpuKorisnika.service(msg, serviceContext);
                         break;
                     case 20:
-                        DohvatiListuZeljaKorisnika.service(msg, context);
+                        DohvatiListuZeljaKorisnika.service(msg, serviceContext);
                         break;
                     case 24:
-                        DohvatiSveArtikle.service(msg, context);
+                        DohvatiSveArtikle.service(msg, serviceContext);
                         break;
                 }
             } catch (JMSException ex) {

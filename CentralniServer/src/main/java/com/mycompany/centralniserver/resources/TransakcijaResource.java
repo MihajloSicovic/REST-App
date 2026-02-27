@@ -45,15 +45,14 @@ public class TransakcijaResource {
     @Resource(lookup="SubTopic")
     Topic myTopic;
     
-    @Resource(lookup="serverQueue")
+    @Resource(lookup="SubRepQueue")
     Queue myQueue;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response getAllTransakcija(@Context HttpHeaders headers) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             TextMessage msg = context.createTextMessage();
             msg.setStringProperty("Type", "sub3");
@@ -63,7 +62,7 @@ public class TransakcijaResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            List<TransakcijaModel> result = consumer.receiveBody(List.class);
+            List<TransakcijaModel> result = consumer.receiveBody(List.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
@@ -77,8 +76,7 @@ public class TransakcijaResource {
     @Produces(MediaType.TEXT_PLAIN)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Response createTransakcija(@Context HttpHeaders headers, KorisnikModel km) {
-        try {
-            JMSContext context = connFactory.createContext();
+        try (JMSContext context = connFactory.createContext()) {
             
             ObjectMessage msg = context.createObjectMessage(km);
             msg.setStringProperty("Type", "sub3");
@@ -88,7 +86,7 @@ public class TransakcijaResource {
             JMSProducer producer = context.createProducer();
             producer.send(myTopic, msg);
             JMSConsumer consumer = context.createConsumer(myQueue);
-            String result = consumer.receiveBody(String.class);
+            String result = consumer.receiveBody(String.class, 10000);
             
             return Response.ok(result).build();
         } catch (JMSException ex) {
